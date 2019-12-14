@@ -15,13 +15,12 @@ public:
 	friend ostream& operator<<(ostream&, const Polynomial&);
 	friend istream& operator>>(istream&, Polynomial&);
 	const Polynomial& operator=(const Polynomial& other);
-	Polynomial& operator+(const Polynomial& other) const;
+	Polynomial operator+(const Polynomial& other) const;
 	Polynomial operator+(const Monomial& mon) const;
-	Polynomial& operator-(const Polynomial& other) const;
+	Polynomial operator-(const Polynomial& other) const;
 	Polynomial operator-() const;
 	const Polynomial& operator+=(const Monomial& mon);
-	const double operator[](double num) const;
-	//Monomial& operator[](double num);
+	double& operator[](int num) const;
 	const double operator()(int num) const;
 	const bool operator==(const Monomial& mon) const;
 	const bool operator!=(const Monomial& mon) const;

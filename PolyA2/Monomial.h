@@ -35,6 +35,7 @@ public:
 	void print() const;
 	const int getDegree() const { return degree; };
 	double getCoefficient() const { return coefficient; };
+	double& getCoeByRef() { return coefficient; };
 	Monomial* getNext() const { return next; };
 	void setCoefficient(const int coe) { coefficient = coe; };
 	void setDegree(const int deg) { degree = deg; };

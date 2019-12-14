@@ -17,7 +17,6 @@ Monomial::Monomial(double coe, int deg) : coefficient(coe), degree(deg), next(NU
 		cout << "ERROR! Invalid exponent value entered";
 	else {
 		numberOfMonomials++;
-		printf("Monomial ctor numberOfMonomials %d \n", numberOfMonomials);
 	}
 
 }
@@ -25,12 +24,10 @@ Monomial::Monomial(double coe, int deg) : coefficient(coe), degree(deg), next(NU
 Monomial::Monomial(const Monomial& other)
 	: coefficient(other.coefficient), degree(other.degree) {
 	numberOfMonomials++;
-	printf("Monomial copy ctor numberOfMonomials %d \n", numberOfMonomials);
 }
 
 Monomial::~Monomial() {
 	numberOfMonomials--;
-	printf("~Monomial numberOfMonomials %d \n", numberOfMonomials);
 }
 
 istream& operator>>(istream& in, Monomial& m) {
@@ -132,7 +129,7 @@ void Monomial::print() const {
 	else if (degree == 1) { // coefficient != 1
 		cout << coefficient << "*x";
 	}
-	else {
+	else { // coefficient !=1 AND degree != 1
 		cout << coefficient << "*x^" << degree;
 	}
 }
@@ -142,7 +139,6 @@ const bool Monomial::add(const Monomial& other) {
 		return false;
 	else {
 		coefficient += other.coefficient;
-		//if(coefficient == 0) this->~Monomial();
 		return true;
 	}
 };

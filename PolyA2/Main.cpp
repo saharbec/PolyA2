@@ -10,7 +10,6 @@ void testMonomial() {
 	do {
 		cout << "Enter two monomials m1 and m2: " << endl;
 		cin >> m1 >> m2;
-		cout << m1(3);
 		cout << "m1= " << m1 << ",m2= " << m2 << endl;
 		cout << "m1+m2= " << m1 + m2 << endl;
 		cout << "m1-m2= " << m1 - m2 << endl;
@@ -27,10 +26,7 @@ void testPolynomial() {
 
 	cout << "p=" << p << endl;
 	cout << "Adding one to p" << endl;
-
 	p += Monomial(1);
-
-
 	cout << "p=" << p << endl;
 
 	cout << "Adding x^2 to p" << endl;
@@ -40,11 +36,11 @@ void testPolynomial() {
 	cout << "Adding -x^2 to p" << endl;
 	p += Monomial(-1, 2);
 	cout << "p=" << p << endl;
+
 	cout << "Number of Monomials=" << Monomial::getNumberOfMonomials() << endl;
 	do {
 		cout << "Enter a polynomial: " << endl;
 		cin >> p;
-		cout << "Number of Monomials=" << Monomial::getNumberOfMonomials() << endl;
 		cout << p << endl;
 		cout << "p(0)=" << p(0) << ", p(1)=" << p(1) << ", p(2)=" << p(2) << endl;
 		cout << "p[0]=" << p[0] << ", p[1]=" << p[1] << ", p[2]=" << p[2] << ", p[4]=" << p[4] << endl;
@@ -54,8 +50,8 @@ void testPolynomial() {
 
 int main() {
 	cout << boolalpha;
-	// testMonomial();
-	// cout << "Number of Monomials=" << Monomial::getNumberOfMonomials() << endl;
+	testMonomial();
+	cout << "Number of Monomials=" << Monomial::getNumberOfMonomials() << endl;
 	testPolynomial();
 	cout << "Number of Monomials=" << Monomial::getNumberOfMonomials() << endl;
 	return 0;

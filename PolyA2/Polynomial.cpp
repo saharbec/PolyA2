@@ -18,8 +18,10 @@ Polynomial::~Polynomial() {
 	}
 }
 
-istream& operator >>(istream& in, Polynomial& p) {
-	p.deletePolynomialNodes();
+istream& operator>>(istream& in, Polynomial& p) {
+	if (p.head) {
+		p.deletePolynomialNodes(); // Empty the polynomial
+	}
 	char flag = '.';
 	int counter = 0;
 	while (flag != ',') {
@@ -27,14 +29,14 @@ istream& operator >>(istream& in, Polynomial& p) {
 		cout << endl << "Insert Monomial number " << counter << ": " << endl;
 		Monomial m(0);
 		cin >> m;
-		p.add(m);
+		p.add(m); 
 		cout << endl << "Enter ',' to stop or another character to proceed: ";
 		cin >> flag;
 	}
 	return in;
 }
 
-ostream& operator<< (ostream& out, const Polynomial& p) {
+ostream& operator<<(ostream& out, const Polynomial& p) {
 	p.print();
 	cout << endl;
 	return out;
@@ -58,7 +60,7 @@ const Polynomial& Polynomial::operator=(const Polynomial& other) {
 }
 
 
-Polynomial& Polynomial::operator+(const Polynomial& other) const {
+Polynomial Polynomial::operator+(const Polynomial& other) const {
 	Monomial* polyPtr = head;
 	Polynomial* newPoly = new Polynomial();
 	while (polyPtr != NULL) {
@@ -79,14 +81,14 @@ Polynomial Polynomial::operator+(const Monomial& mon) const {
 	return *temp;
 }
 
-Polynomial& Polynomial::operator-(const Polynomial& other) const {
-	Monomial* polyPtr = head->getNext();
+Polynomial Polynomial::operator-(const Polynomial& other) const {
+	Monomial* polyPtr = head;
 	Polynomial* newPoly = new Polynomial();
 	while (polyPtr != NULL) {
 		newPoly->add(Monomial(polyPtr->getCoefficient(), polyPtr->getDegree()));
 		polyPtr = polyPtr->getNext();
 	}
-	polyPtr = other.head->getNext();
+	polyPtr = other.head;
 	while (polyPtr != NULL) {
 		newPoly->add(-(Monomial(polyPtr->getCoefficient(), polyPtr->getDegree())));
 		polyPtr = polyPtr->getNext();
@@ -97,7 +99,7 @@ Polynomial& Polynomial::operator-(const Polynomial& other) const {
 Polynomial Polynomial::operator-() const {
 	Polynomial* temp = new Polynomial;
 	Monomial* monPtr = temp->head;
-	Monomial* ptr = head->getNext();
+	Monomial* ptr = head;
 	while (ptr != NULL) {
 		monPtr->setNext(new Monomial(-ptr->getCoefficient(), ptr->getDegree()));
 		monPtr = monPtr->getNext();
@@ -111,24 +113,19 @@ const Polynomial& Polynomial::operator+=(const Monomial& mon) {
 	return *this;
 }
 
-const double Polynomial::operator[](double num) const { // Get coefficient where degree=num
+double& Polynomial::operator[](int num) const { // Get coefficient where degree=num
 	Monomial* current = head;
-	if (current == NULL) return 0;
+	double x = 0;
+	if (head == NULL) return x;
 	while (current != NULL) {
-		if (current->getDegree() == num) return current->getCoefficient();
+		if (current->getDegree() == num) {
+			return (current->getCoeByRef()); //  Get the coefficient by ref to read/re-assign
+		}
 		else current = current->getNext();
 	}
-	return 0;
+	// If reached so far the degree hasn't been found so returning 0
+	return x; // Returning 0
 }
-
-//Monomial& Polynomial::operator[](double num){ // Assign new coefficient where degree=num
-//	Monomial* current = head->getNext();
-//	while (current != NULL) {
-//		if (current->getDegree() == num) return *current;
-//		current = current->getNext();
-//	}
-//	return *current;
-//}
 
 const double Polynomial::operator()(const int num) const {
 	Monomial* current = head;
@@ -166,20 +163,22 @@ void Polynomial::deletePolynomialNodes() {
 }
 
 void Polynomial::print() const {
-	Monomial *monomsPtr = head;
-	if (monomsPtr == NULL) {
+	// list is empty or filled only by zero
+	if (head == NULL || (head->getCoefficient() == 0 && head->getNext() == NULL)) { 
 		cout << 0;
 		return;
 	}
-
-	while (monomsPtr != NULL) {
-		if (monomsPtr->getCoefficient() != 0) monomsPtr->print();
-		if (
-			monomsPtr->getNext() != NULL &&
-			monomsPtr->getNext()->getCoefficient() > 0
-			)
-			cout << "+";
-		monomsPtr = monomsPtr->getNext();
+	else {
+		Monomial *monomsPtr = head;
+		while (monomsPtr != NULL) {
+			if (monomsPtr->getCoefficient() != 0) monomsPtr->print();
+			if (
+				monomsPtr->getNext() != NULL &&
+				monomsPtr->getNext()->getCoefficient() > 0
+				)
+				cout << "+";
+			monomsPtr = monomsPtr->getNext();
+		}
 	}
 }
 
@@ -188,7 +187,10 @@ void Polynomial::add(const Monomial& monToAdd) {
 		head = new Monomial(monToAdd);
 		return;
 	}
-
+	else if (monToAdd.getCoefficient() == 0)
+	{
+		return;
+	}
 	Monomial *monomsPtr = head, *prev = NULL;
 
 	while (monomsPtr) {
@@ -219,7 +221,7 @@ void Polynomial::add(const Monomial& monToAdd) {
 		monomsPtr = monomsPtr->getNext();
 	}
 
-	// If reached so far need to add the end of the list
+	// If reached so far need to add to the end of the list
 	Monomial* newMonToAdd = new Monomial(monToAdd);
 	prev->setNext(newMonToAdd);
 }
