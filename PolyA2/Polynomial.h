@@ -8,7 +8,6 @@ using namespace std;
 class Polynomial {
 private:
 	Monomial* head;
-	int maxDegree;
 
 public:
 	Polynomial();
@@ -28,8 +27,5 @@ public:
 	const bool operator!=(const Monomial& mon) const;
 	void print() const;
 	void add(const Monomial& monToAdd);
-	void reOrderPoly();
-	int const getMaxDegree() const { return maxDegree; };
-	void setNewMaxDegree();
 	void deletePolynomialNodes();
 };

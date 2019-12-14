@@ -7,9 +7,6 @@ using namespace std;
 
 Polynomial::Polynomial() {
 	head = NULL;
-	//head = new Monomial(0);
-	//head->setNext(NULL);
-	maxDegree = 0;
 }
 
 Polynomial::~Polynomial() {
@@ -44,14 +41,14 @@ ostream& operator<< (ostream& out, const Polynomial& p) {
 }
 
 const Polynomial& Polynomial::operator=(const Polynomial& other) {
-	if (this->head->getNext() != NULL) { // if this poly isn't empty then clear its monomials
+	if (this->head != NULL) { // if this poly isn't empty then clear its monomials
 		this->deletePolynomialNodes();
 	}
-	if (other.head->getNext() != NULL) { // if other poly isn't empty
+	if (other.head != NULL) { // if other poly isn't empty
 		Monomial* ptr = head;
-		Monomial* otherPtr = other.head->getNext();
+		Monomial* otherPtr = other.head;
 		while (otherPtr != NULL) {
-			ptr->setNext(new Monomial(otherPtr->getCoefficient(), otherPtr->getDegree()));
+			ptr->setNext(new Monomial(*otherPtr));
 			otherPtr = otherPtr->getNext();
 			ptr = ptr->getNext();
 		}
@@ -166,31 +163,6 @@ void Polynomial::deletePolynomialNodes() {
 		toDelete = ptr;
 	}
 	head = NULL;
-	maxDegree = 0;
-}
-
-void Polynomial::reOrderPoly() {
-	Monomial *monomsPtr = head;
-	/*if (monomsPtr->getNext() != NULL) {
-		monomsPtr = monomsPtr->getNext();
-	}
-	else
-		return;*/
-	if (head == NULL) return;
-
-	if (monomsPtr->getCoefficient() == 0) {
-		head->setNext(monomsPtr->getNext());
-	}
-	while (monomsPtr->getNext() != NULL) {
-		if (monomsPtr->getNext()->getCoefficient() == 0) {
-			monomsPtr->setNext(monomsPtr->getNext()->getNext());
-		}
-		monomsPtr = monomsPtr->getNext();
-	}
-	if (monomsPtr->getNext() && monomsPtr->getNext()->getCoefficient() == 0) {
-		monomsPtr->setNext(NULL);
-	}
-	this->setNewMaxDegree();
 }
 
 void Polynomial::print() const {
@@ -211,37 +183,17 @@ void Polynomial::print() const {
 	}
 }
 
-void Polynomial::setNewMaxDegree() {
-	Monomial *monomsPtr = head;
-	if (monomsPtr->getNext() != NULL) {
-		monomsPtr = monomsPtr->getNext();
-	}
-	else {
-		maxDegree = 0;
-		return;
-	}
-	int tempMaxDegree = monomsPtr->getDegree();
-	while (monomsPtr != NULL) {
-		if (monomsPtr->getDegree() > tempMaxDegree)
-			tempMaxDegree = monomsPtr->getDegree();
-		monomsPtr = monomsPtr->getNext();
-	}
-	maxDegree = tempMaxDegree;
-}
-
 void Polynomial::add(const Monomial& monToAdd) {
-
 	if (head == NULL) {
 		head = new Monomial(monToAdd);
-		maxDegree = monToAdd.getDegree();
 		return;
 	}
 
 	Monomial *monomsPtr = head, *prev = NULL;
 
 	while (monomsPtr) {
-		if (monomsPtr->add(monToAdd)) {
-			if (monomsPtr->getCoefficient() == 0) {
+		if (monomsPtr->add(monToAdd)) { // Found monomial with same degree
+			if (monomsPtr->getCoefficient() == 0) { // if monomial coe is 0 need to vanish
 				if (prev) {
 					prev->setNext(monomsPtr->getNext());
 				}
@@ -250,65 +202,25 @@ void Polynomial::add(const Monomial& monToAdd) {
 				}
 				delete monomsPtr;
 			}
-			this->reOrderPoly();
 			return;
 		}
-		/*else if (monomsPtr->getDegree() < monToAdd.getDegree()) {
+		else if (monToAdd.getDegree() > monomsPtr->getDegree()) { // Need to insert before monomsptr
 			Monomial* newMonToAdd = new Monomial(monToAdd);
 			newMonToAdd->setNext(monomsPtr);
-			//monomsPtr->setNext(newMonToAdd);
-			return;
-		}*/
-		prev = monomsPtr;
-		monomsPtr = monomsPtr->getNext();
-	}
-
-	Monomial* newMonToAdd = new Monomial(monToAdd);
-	newMonToAdd->setNext(head);
-	head = newMonToAdd;
-
-	this->reOrderPoly();
-
-
-
-
-	/*else if (monToAdd.getDegree() > maxDegree || head->getNext() == NULL)
-	{
-		Monomial* newMonToAdd = new Monomial(monToAdd.getCoefficient(), monToAdd.getDegree());
-		newMonToAdd->setNext(head->getNext());
-		head->setNext(newMonToAdd);
-		maxDegree = monToAdd.getDegree();
-		return;
-	}*/
-
-	//Monomial *monomsPtr = head, *prev = head;
-
-	/*while(monomsPtr) {
-		if(monomsPtr->add(monToAdd)) {
-			if (monomsPtr->getCoefficient() == 0) {
-				prev->setNext(monomsPtr->getNext());
-				delete monomsPtr;
+			if (prev) {
+				prev->setNext(newMonToAdd);
 			}
-			//monToAdd.~Monomial();
-			this->reOrderPoly();
-			return;
-		}
-		else if (monomsPtr->getDegree() < monToAdd.getDegree()) {
-			Monomial* newMonToAdd = new Monomial(monToAdd);
-			newMonToAdd->setNext(monomsPtr);
-			//monomsPtr->setNext(newMonToAdd);
+			else {
+				head = newMonToAdd;
+			}
 			return;
 		}
 		prev = monomsPtr;
 		monomsPtr = monomsPtr->getNext();
 	}
-	if(monomsPtr->add(monToAdd)) {
-		//monToAdd.~Monomial();
-		this->reOrderPoly();
-		return;
-	}
-	// If reached so far, need to add the monomial to the end of the polynomial
-	Monomial* newMonToAdd = new Monomial(monToAdd.getCoefficient(), monToAdd.getDegree());
-	monomsPtr->setNext(newMonToAdd);
-	newMonToAdd->setNext(NULL);*/
+
+	// If reached so far need to add the end of the list
+	Monomial* newMonToAdd = new Monomial(monToAdd);
+	prev->setNext(newMonToAdd);
 }
+
