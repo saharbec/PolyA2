@@ -25,11 +25,10 @@ public:
 	Monomial operator-(const Monomial& other) const;
 	Monomial operator-() const;
 	Monomial operator*(const Monomial& other) const;
-	const Monomial& operator*=(const int numToMul);
+	const Monomial& operator*=(const Monomial& other);
 	const Monomial& operator+=(const Monomial& other);
 	const Monomial& operator-=(const Monomial& other);
 	const double operator()(const int num) const;
-	const bool operator!=(const int numToCompare) const;
 	const bool add(const Monomial& other);
 	static int getNumberOfMonomials() { return numberOfMonomials; };
 	void print() const;

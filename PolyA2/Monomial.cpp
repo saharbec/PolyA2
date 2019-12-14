@@ -74,7 +74,7 @@ Monomial Monomial::operator-(const Monomial& other) const {
 }
 
 Monomial Monomial::operator-() const {
-	return Monomial(-this->getCoefficient(), getDegree());
+	return Monomial(-coefficient, degree);
 }
 
 
@@ -82,8 +82,9 @@ Monomial Monomial::operator*(const Monomial& other) const {
 	return Monomial(coefficient * other.coefficient, degree + other.degree);
 }
 
-const Monomial& Monomial::operator*=(const int numToMul) {
-	coefficient *= numToMul;
+const Monomial& Monomial::operator*=(const Monomial& other) {
+	coefficient *= other.coefficient;
+	degree += other.degree;
 	return *this;
 }
 
@@ -104,14 +105,6 @@ const Monomial& Monomial::operator-=(const Monomial& other) {
 
 const double Monomial::operator()(const int num) const {
 	return coefficient * getPow(num, degree);
-}
-
-
-const bool Monomial::operator!=(const int numToCompare) const {
-	if (degree == 0) {
-		if (coefficient == numToCompare) return false;
-	}
-	return true;
 }
 
 void Monomial::print() const {

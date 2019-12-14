@@ -43,18 +43,15 @@ ostream& operator<<(ostream& out, const Polynomial& p) {
 }
 
 const Polynomial& Polynomial::operator=(const Polynomial& other) {
-	if (this->head != NULL) { // if this poly isn't empty then clear its monomials
+	if (head) { // if this poly isn't empty then clear its monomials
 		this->deletePolynomialNodes();
 	}
-	if (other.head != NULL) { // if other poly isn't empty
-		Monomial* ptr = head;
+	if (other.head) { // if other poly isn't empty
 		Monomial* otherPtr = other.head;
 		while (otherPtr != NULL) {
-			ptr->setNext(new Monomial(*otherPtr));
+			this->add(*otherPtr);
 			otherPtr = otherPtr->getNext();
-			ptr = ptr->getNext();
 		}
-		ptr->setNext(NULL);
 	}
 	return *this;
 }
@@ -85,12 +82,12 @@ Polynomial Polynomial::operator-(const Polynomial& other) const {
 	Monomial* polyPtr = head;
 	Polynomial* newPoly = new Polynomial();
 	while (polyPtr != NULL) {
-		newPoly->add(Monomial(polyPtr->getCoefficient(), polyPtr->getDegree()));
+		newPoly->add(Monomial(*polyPtr));
 		polyPtr = polyPtr->getNext();
 	}
 	polyPtr = other.head;
 	while (polyPtr != NULL) {
-		newPoly->add(-(Monomial(polyPtr->getCoefficient(), polyPtr->getDegree())));
+		newPoly->add(-(Monomial(*polyPtr)));
 		polyPtr = polyPtr->getNext();
 	}
 	return *newPoly;
@@ -101,7 +98,7 @@ Polynomial Polynomial::operator-() const {
 	Monomial* monPtr = temp->head;
 	Monomial* ptr = head;
 	while (ptr != NULL) {
-		monPtr->setNext(new Monomial(-ptr->getCoefficient(), ptr->getDegree()));
+		monPtr->setNext(new Monomial(-(ptr->getCoefficient()), ptr->getDegree()));
 		monPtr = monPtr->getNext();
 		ptr = ptr->getNext();
 	}
@@ -116,7 +113,7 @@ const Polynomial& Polynomial::operator+=(const Monomial& mon) {
 double& Polynomial::operator[](int num) const { // Get coefficient where degree=num
 	Monomial* current = head;
 	double x = 0;
-	if (head == NULL) return x;
+	if (head == NULL) return x; // list is empty, returning 0
 	while (current != NULL) {
 		if (current->getDegree() == num) {
 			return (current->getCoeByRef()); //  Get the coefficient by ref to read/re-assign
@@ -137,19 +134,18 @@ const double Polynomial::operator()(const int num) const {
 	return polyValue;
 }
 
+const bool Polynomial::operator==(const Monomial& mon) const {
+	if (head && head->getCoefficient() == mon.getCoefficient() &&
+		head->getDegree() == mon.getDegree() && head->getNext() == NULL)
+		return true;
+	else return false;
+};
 
 const bool Polynomial::operator!=(const Monomial& mon) const {
 	if (head && head->getCoefficient() == mon.getCoefficient() &&
 		head->getDegree() == mon.getDegree() && head->getNext() == NULL)
 		return false;
 	else return true;
-};
-
-const bool Polynomial::operator==(const Monomial& mon) const {
-	if (head && head->getCoefficient() == mon.getCoefficient() &&
-		head->getDegree() == mon.getDegree() && head->getNext() == NULL)
-		return true;
-	else return false;
 };
 
 void Polynomial::deletePolynomialNodes() {
