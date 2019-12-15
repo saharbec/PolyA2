@@ -1,4 +1,5 @@
 #include <iomanip>
+#include <assert.h>
 #include <iostream>
 using namespace std;
 #include "Monomial.h"
@@ -13,6 +14,7 @@ const double getPow(double base, int exponent) {
 int Monomial::numberOfMonomials = 0;
 
 Monomial::Monomial(double coe, int deg) : coefficient(coe), degree(deg), next(NULL) {
+	assert(deg >= 0);
 	if (deg < 0)
 		cout << "ERROR! Invalid exponent value entered";
 	else {
@@ -46,10 +48,9 @@ ostream& operator<<(ostream& out, const Monomial& m) {
 	return out;
 }
 
-Monomial& Monomial::operator=(int coe) {
-	if (this != NULL) {
-		coefficient = coe;
-	}
+const Monomial& Monomial::operator=(const Monomial& other) {
+	coefficient = other.coefficient;
+	degree = other.degree;
 	return *this;
 };
 

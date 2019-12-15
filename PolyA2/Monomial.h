@@ -18,7 +18,7 @@ public:
 	~Monomial();
 	friend ostream& operator <<(ostream&, const Monomial&);
 	friend istream& operator >>(istream&, Monomial&);
-	Monomial& operator=(int coe);
+	const Monomial& operator=(const Monomial& other);
 	const bool operator==(const Monomial& other) const;
 	const bool operator!=(const Monomial& other) const;
 	Monomial operator+(const Monomial& other) const;

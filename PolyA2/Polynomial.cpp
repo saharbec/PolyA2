@@ -86,7 +86,7 @@ Polynomial Polynomial::operator+(const Polynomial& other) const {
 		newPoly.add(*polyPtr);
 		polyPtr = polyPtr->getNext();
 	}
-	return newPoly;
+	return newPoly; // Returns object by value
 }
 
 Polynomial Polynomial::operator+(const Monomial& mon) const {
@@ -133,11 +133,34 @@ Polynomial Polynomial::operator-() const {
 		monPtr = monPtr->getNext();
 		ptr = ptr->getNext();
 	}
-	return newPoly;
+	return newPoly; // Returns object by value
 }
 
 const Polynomial& Polynomial::operator+=(const Monomial& mon) {
 	this->add(mon);
+	return *this;
+}
+
+const Polynomial& Polynomial::operator+=(const Polynomial& other) {
+	Monomial* otherPtr = other.head;
+	while (otherPtr) {
+		this->add(*otherPtr);
+		otherPtr = otherPtr->getNext();
+	}
+	return *this;
+}
+
+const Polynomial& Polynomial::operator-=(const Monomial& mon) {
+	this->add(-mon);
+	return *this;
+}
+
+const Polynomial& Polynomial::operator-=(const Polynomial& other) {
+	Monomial* otherPtr = other.head;
+	while (otherPtr) {
+		this->add(-(*otherPtr));
+		otherPtr = otherPtr->getNext();
+	}
 	return *this;
 }
 
@@ -187,6 +210,23 @@ const bool Polynomial::operator==(const Monomial& mon) const {
 		head->getDegree() == mon.getDegree() && head->getNext() == NULL)
 		return true;
 	else return false;
+};
+
+const bool Polynomial::operator!=(const Polynomial& other) const {
+	if (!head || !other.head) return true;
+	Monomial* monPtr = head;
+	Monomial* otherPtr = other.head;
+	while (monPtr && otherPtr) {
+		if (monPtr->getCoefficient() == otherPtr->getCoefficient() &&
+			monPtr->getDegree() == otherPtr->getDegree())
+		{
+			monPtr = monPtr->getNext();
+			otherPtr = otherPtr->getNext();
+		}
+		else return true;
+	}
+	if (otherPtr || monPtr) return true; // didn't reach the end of one of the polynomials
+	else return false; // They are equal
 };
 
 const bool Polynomial::operator!=(const Monomial& mon) const {
