@@ -75,8 +75,8 @@ const Polynomial& Polynomial::operator=(const Polynomial& other) {
 
 
 Polynomial Polynomial::operator+(const Polynomial& other) const {
-	Monomial* polyPtr = head;
 	Polynomial newPoly;
+	Monomial* polyPtr = head;
 	while (polyPtr != NULL) {
 		newPoly.add(*polyPtr);
 		polyPtr = polyPtr->getNext();
@@ -118,13 +118,14 @@ Polynomial Polynomial::operator-(const Monomial& mon) const {
 
 
 Polynomial Polynomial::operator-() const {
-	if (!head) return Polynomial();
-	Polynomial temp;
+	Polynomial newPoly;
+	if (!head) return newPoly; // Returns empty polynomial
+
 	Monomial* monPtr = head;
 	Monomial* ptr = head;
-	if (head) {
-		temp.head = new Monomial(-head->getCoefficient(),head->getDegree());
-		monPtr = temp.head;
+	if (head) { /// Set the head of the new polynomial
+		newPoly.head = new Monomial(-head->getCoefficient(),head->getDegree());
+		monPtr = newPoly.head;
 		ptr = head->getNext();
 	}
 	while (ptr != NULL) {
@@ -132,7 +133,7 @@ Polynomial Polynomial::operator-() const {
 		monPtr = monPtr->getNext();
 		ptr = ptr->getNext();
 	}
-	return temp;
+	return newPoly;
 }
 
 const Polynomial& Polynomial::operator+=(const Monomial& mon) {
