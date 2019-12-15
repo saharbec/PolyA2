@@ -18,6 +18,22 @@ Polynomial::~Polynomial() {
 	}
 }
 
+Polynomial::Polynomial(const Polynomial& other) {
+	head = NULL;
+	Monomial* ptr = head,*otherPtr = other.head;
+	if (!other.head) return;
+	else {
+		head = new Monomial(otherPtr->getCoefficient(),otherPtr->getDegree());
+		ptr = head;
+		otherPtr = otherPtr->getNext();
+		while (otherPtr) {
+			ptr->setNext(new Monomial(otherPtr->getCoefficient(), otherPtr->getDegree()));
+			ptr = ptr->getNext();
+			otherPtr = otherPtr->getNext();
+		}
+	}
+}
+
 istream& operator>>(istream& in, Polynomial& p) {
 	if (p.head) {
 		p.deletePolynomialNodes(); // Empty the polynomial
@@ -43,6 +59,7 @@ ostream& operator<<(ostream& out, const Polynomial& p) {
 }
 
 const Polynomial& Polynomial::operator=(const Polynomial& other) {
+	if (*this == other) return *this;
 	if (head) { // if this poly isn't empty then clear its monomials
 		this->deletePolynomialNodes();
 	}
@@ -59,50 +76,63 @@ const Polynomial& Polynomial::operator=(const Polynomial& other) {
 
 Polynomial Polynomial::operator+(const Polynomial& other) const {
 	Monomial* polyPtr = head;
-	Polynomial* newPoly = new Polynomial();
+	Polynomial newPoly;
 	while (polyPtr != NULL) {
-		newPoly->add(*polyPtr);
+		newPoly.add(*polyPtr);
 		polyPtr = polyPtr->getNext();
 	}
 	polyPtr = other.head;
 	while (polyPtr != NULL) {
-		newPoly->add(*polyPtr);
+		newPoly.add(*polyPtr);
 		polyPtr = polyPtr->getNext();
 	}
-	return *newPoly;
+	return newPoly;
 }
 
 Polynomial Polynomial::operator+(const Monomial& mon) const {
-	Polynomial* temp = new Polynomial(*this);
-	temp->add(mon);
-	return *temp;
+	Polynomial temp = *this;
+	temp.add(mon);
+	return temp;
 }
 
 Polynomial Polynomial::operator-(const Polynomial& other) const {
 	Monomial* polyPtr = head;
-	Polynomial* newPoly = new Polynomial();
+	Polynomial newPoly;
 	while (polyPtr != NULL) {
-		newPoly->add(Monomial(*polyPtr));
+		newPoly.add(Monomial(*polyPtr));
 		polyPtr = polyPtr->getNext();
 	}
 	polyPtr = other.head;
 	while (polyPtr != NULL) {
-		newPoly->add(-(Monomial(*polyPtr)));
+		newPoly.add(-(Monomial(*polyPtr)));
 		polyPtr = polyPtr->getNext();
 	}
-	return *newPoly;
+	return newPoly;
 }
 
+Polynomial Polynomial::operator-(const Monomial& mon) const {
+	Polynomial temp = *this;
+	temp.add(-mon);
+	return temp;
+}
+
+
 Polynomial Polynomial::operator-() const {
-	Polynomial* temp = new Polynomial;
-	Monomial* monPtr = temp->head;
+	if (!head) return Polynomial();
+	Polynomial temp;
+	Monomial* monPtr = head;
 	Monomial* ptr = head;
+	if (head) {
+		temp.head = new Monomial(-head->getCoefficient(),head->getDegree());
+		monPtr = temp.head;
+		ptr = head->getNext();
+	}
 	while (ptr != NULL) {
 		monPtr->setNext(new Monomial(-(ptr->getCoefficient()), ptr->getDegree()));
 		monPtr = monPtr->getNext();
 		ptr = ptr->getNext();
 	}
-	return *temp;
+	return temp;
 }
 
 const Polynomial& Polynomial::operator+=(const Monomial& mon) {
@@ -133,6 +163,23 @@ const double Polynomial::operator()(const int num) const {
 	}
 	return polyValue;
 }
+
+const bool Polynomial::operator==(const Polynomial& other) const {
+	if (!head || !other.head) return false;
+	Monomial* monPtr = head;
+	Monomial* otherPtr = other.head;
+	while (monPtr && otherPtr) {
+		if (monPtr->getCoefficient() == otherPtr->getCoefficient() &&
+			monPtr->getDegree() == otherPtr->getDegree())
+		{
+			monPtr = monPtr->getNext();
+			otherPtr = otherPtr->getNext();
+		}
+		else return false;
+	}
+	if (otherPtr || monPtr) return false; // didn't reach the end of one of the polynomials
+	else return true; // They are equal
+};
 
 const bool Polynomial::operator==(const Monomial& mon) const {
 	if (head && head->getCoefficient() == mon.getCoefficient() &&
