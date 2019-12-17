@@ -36,9 +36,10 @@ public:
 	double getCoefficient() const { return coefficient; };
 	double& getCoeByRef() { return coefficient; };
 	Monomial* getNext() const { return next; };
-	void setCoefficient(const int coe) { coefficient = coe; };
+	void setCoefficient(const double coe) { coefficient = coe; };
 	void setDegree(const int deg) { degree = deg; };
 	void setNext(Monomial *newNext) { next = newNext; };
+	static void ExtractCoeAndDegFromString(char* stringToRead, double& c, int &d);
 };
 
 #endif /* Monomial_h */

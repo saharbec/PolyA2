@@ -25,7 +25,7 @@ public:
 	const Polynomial& operator+=(const Polynomial& other);
 	const Polynomial& operator-=(const Monomial& mon);
 	const Polynomial& operator-=(const Polynomial& other);
-	double& operator[](int num) const;
+	double operator[](int num) const;
 	const double operator()(int num) const;
 	const bool operator==(const Polynomial& other) const;
 	const bool operator==(const Monomial& mon) const;

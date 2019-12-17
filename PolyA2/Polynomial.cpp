@@ -38,23 +38,45 @@ istream& operator>>(istream& in, Polynomial& p) {
 	if (p.head) {
 		p.deletePolynomialNodes(); // Empty the polynomial
 	}
-	char flag = '.';
-	int counter = 0;
-	while (flag != ',') {
-		counter++;
-		cout << endl << "Insert Monomial number " << counter << ": " << endl;
-		Monomial m(0);
-		cin >> m;
-		p.add(m); 
-		cout << endl << "Enter ',' to stop or another character to proceed: ";
-		cin >> flag;
+	int i,j=0,d=0;
+	double c = 0;
+	bool addMinus,isStringInsertedCorrectly = false;
+	char *stringToRead = new char[100];
+	while (!isStringInsertedCorrectly) {
+		cin.getline(stringToRead, 100);
+		if ((stringToRead[0] >= '0' && stringToRead[0] <= '9') || (stringToRead[0] == '-')) {
+			isStringInsertedCorrectly = true;
+		}
+		else cout << "String wasn't inserted correctly, please enter a valid monomial." << endl;
+	}	
+	addMinus = stringToRead[0] == '-' ? true : false;
+
+	for (i = 0; stringToRead[i] != ',' && stringToRead[i] != '\0'; i++) {
+		char *monomialStr = new char[100];
+		if (addMinus == true) { // if this flag is true then the monomial is negative
+			monomialStr[j] = '-';
+			j++;
+		}
+		while (stringToRead[i] != '+' && stringToRead[i] != '-' && stringToRead[i] != ',' && stringToRead[i] != '\0') {
+			monomialStr[j] = stringToRead[i];
+			i++; 
+			j++;
+		}
+		if (stringToRead[i] == '-') addMinus = true; // flag next monomial as negative
+		else addMinus = false; // flag next monomial as positive/non-exist
+		monomialStr[j] = '\0';
+		Monomial::ExtractCoeAndDegFromString(monomialStr, c, d); // get coe and deg from the string
+		delete[]monomialStr;
+		p.add(Monomial(c, d));
+		c = d = j = 0; // Reseting all the needed variables
 	}
+
+	delete[]stringToRead;
 	return in;
 }
 
 ostream& operator<<(ostream& out, const Polynomial& p) {
 	p.print();
-	cout << endl;
 	return out;
 }
 
@@ -164,7 +186,7 @@ const Polynomial& Polynomial::operator-=(const Polynomial& other) {
 	return *this;
 }
 
-double& Polynomial::operator[](int num) const { // Get coefficient where degree=num
+double Polynomial::operator[](int num) const { // Get coefficient where degree=num
 	Monomial* current = head;
 	double x = 0;
 	if (head == NULL) return x; // list is empty, returning 0

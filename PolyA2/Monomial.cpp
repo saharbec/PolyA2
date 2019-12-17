@@ -1,6 +1,7 @@
 #include <iomanip>
 #include <assert.h>
 #include <iostream>
+#include <stdlib.h>
 using namespace std;
 #include "Monomial.h"
 
@@ -33,11 +34,14 @@ Monomial::~Monomial() {
 }
 
 istream& operator>>(istream& in, Monomial& m) {
-	int c, d;
-	cout << "Insert Monomial coefficient: ";
-	in >> c;
-	cout << "Insert Monomial degree: ";
-	in >> d;
+	double c = 0;
+	int d = 0, i;
+	bool checkCoefficient = true; // Flag that tells if to check for coefficient or degree
+	char* stringToRead = new char[100];
+	cout << "Insert Monomial:";
+	cin.getline(stringToRead,100);
+	m.ExtractCoeAndDegFromString(stringToRead, c, d); // the function extracts the coe and deg from the string
+	delete []stringToRead; // Deleting the string memory allocation
 	m.setCoefficient(c);
 	m.setDegree(d);
 	return in;
@@ -136,3 +140,23 @@ const bool Monomial::add(const Monomial& other) {
 		return true;
 	}
 };
+
+void Monomial::ExtractCoeAndDegFromString(char* stringToRead, double &c, int &d) {
+	int i;
+	bool checkCoefficient = true,turnToNegative = false;
+	if (stringToRead[0] == '-') turnToNegative = true;
+	for (i = 0; stringToRead[i] != '\0'; i++) {
+		if (checkCoefficient == true && (stringToRead[i] >= '0' && stringToRead[i] <= '9')) { // add to coe
+			c = c * 10 + (stringToRead[i] - '0');
+		}
+		else if (stringToRead[i] == 'x')
+		{
+			checkCoefficient = false; // Start checking for degree
+		}
+		else if (checkCoefficient == false && stringToRead[i] != '^' && stringToRead[i] != ' ') { // add to degree
+			d = d * 10 + (stringToRead[i] - '0');
+		}
+	}
+	if (checkCoefficient == false && d == 0) d = 1; // Encountered x but no exponent later
+	if (turnToNegative == true) c *= -1; // First char was '-'
+}
