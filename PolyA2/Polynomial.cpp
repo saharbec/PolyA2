@@ -69,6 +69,7 @@ istream& operator>>(istream& in, Polynomial& p) {
 		delete[]monomialStr;
 		p.add(Monomial(c, d));
 		c = d = j = 0; // Reseting all the needed variables
+		if (stringToRead[i] == '\0') break; // Reached end of string
 	}
 
 	delete[]stringToRead;
