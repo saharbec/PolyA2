@@ -35,8 +35,7 @@ Monomial::~Monomial() {
 
 istream& operator>>(istream& in, Monomial& m) {
 	double c = 0;
-	int d = 0, i;
-	bool checkCoefficient = true; // Flag that tells if to check for coefficient or degree
+	int d = 0;
 	char* stringToRead = new char[100];
 	cout << "Insert Monomial:";
 	cin.getline(stringToRead,100);
