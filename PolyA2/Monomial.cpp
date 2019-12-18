@@ -37,7 +37,6 @@ istream& operator>>(istream& in, Monomial& m) {
 	double c = 0;
 	int d = 0;
 	char* stringToRead = new char[100];
-	cout << "Insert Monomial:";
 	cin.getline(stringToRead,100);
 	m.ExtractCoeAndDegFromString(stringToRead, c, d); // the function extracts the coe and deg from the string
 	delete []stringToRead; // Deleting the string memory allocation
