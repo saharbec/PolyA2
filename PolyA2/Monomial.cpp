@@ -25,7 +25,7 @@ Monomial::Monomial(double coe, int deg) : coefficient(coe), degree(deg), next(NU
 }
 
 Monomial::Monomial(const Monomial& other)
-	: coefficient(other.coefficient), degree(other.degree) {
+	: coefficient(other.coefficient), degree(other.degree), next(NULL) {
 	numberOfMonomials++;
 }
 
